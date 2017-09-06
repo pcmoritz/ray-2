@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ray;
+
+enum MessageType {
+  Nil = 0;
+  // Task is submitted to a scheduler.
+  SubmitTask = 1;
+  // Get a new task from the local scheduler. This is sent from a local
+  // scheduler to a worker.
+  GetTask = 2;
+}
+
+message Task {
+  bytes task_id = 1;
+  bytes function_id = 2;
+  repeated bytes arg_ids = 3;
+  bytes arg_data = 4;
+  repeated bytes return_ids = 5;
+}
