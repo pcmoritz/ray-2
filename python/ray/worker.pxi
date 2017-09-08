@@ -15,6 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import sys
+
 cdef object_id_list(const vector[CObjectID]& object_ids):
     result = []
     for i in range(object_ids.size()):
@@ -35,8 +37,15 @@ cdef class Worker:
             check_status(self.worker.get().GetNextTask(address(function_id.data), address(task_id.data), address(object_ids), address(return_ids)))
         return function_id, task_id, object_id_list(object_ids), object_id_list(return_ids)
 
-def connect(c_string socket_name):
+
+def register_worker(c_string socket_name):
     cdef Worker result = Worker()
     with nogil:
         check_status(result.worker.get().Connect(socket_name))
     return result
+
+def start_worker(socket):
+    worker = register_worker(socket.encode("ascii"))
+    while True:
+        function_id, task_id, arg_ids, return_ids = worker.get_next_task()
+        print("executing task ", task_id)

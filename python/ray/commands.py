@@ -15,4 +15,25 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from ray.lib import Worker, Client, connect, start_worker
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import click
+
+import ray
+
+@click.group()
+def cli():
+    pass
+
+@click.command()
+@click.option("--socket", required=True, type=str,
+              help="The UNIX socket of the local scheduler to connect to")
+def worker(socket):
+    ray.start_worker(socket)
+
+cli.add_command(worker)
+
+if __name__ == "__main__":
+    cli()
