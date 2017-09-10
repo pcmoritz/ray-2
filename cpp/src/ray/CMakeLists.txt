@@ -1,19 +1,20 @@
 
-CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
-SET(CMAKE_CXX_FLAGS "-g -Wall -Werror -std=c++11")
+cmake_minimum_required(VERSION 3.2)
+set(CMAKE_CXX_FLAGS "-g -Wall -Werror -std=c++11")
 
-ADD_SUBDIRECTORY(proto)
-ADD_SUBDIRECTORY(util)
-ADD_SUBDIRECTORY(gcs)
+add_subdirectory(proto)
+add_subdirectory(util)
+add_subdirectory(gcs)
 
-INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIRS})
+include_directories(${PROTOBUF_INCLUDE_DIRS})
+include_directories(../../thirdparty/)
 
 set(HIREDIS_SRCS
-  ../hiredis/dict.c
-  ../hiredis/hiredis.c
-  ../hiredis/net.c
-  ../hiredis/read.c
-  ../hiredis/sds.c
+  ../../thirdparty/hiredis/dict.c
+  ../../thirdparty/hiredis/hiredis.c
+  ../../thirdparty/hiredis/net.c
+  ../../thirdparty/hiredis/read.c
+  ../../thirdparty/hiredis/sds.c
 )
 
 set(RAY_SRCS
