@@ -15,4 +15,4 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from ray.lib import Worker, Client, connect, start_worker
+from ray.lib import JobID, FunctionID, ObjectID, Worker, Client, connect, connect_gcs, start_worker, init

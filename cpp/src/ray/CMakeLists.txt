@@ -4,8 +4,17 @@ SET(CMAKE_CXX_FLAGS "-g -Wall -Werror -std=c++11")
 
 ADD_SUBDIRECTORY(proto)
 ADD_SUBDIRECTORY(util)
+ADD_SUBDIRECTORY(gcs)
 
 INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIRS})
+
+set(HIREDIS_SRCS
+  ../hiredis/dict.c
+  ../hiredis/hiredis.c
+  ../hiredis/net.c
+  ../hiredis/read.c
+  ../hiredis/sds.c
+)
 
 set(RAY_SRCS
   client.cc
@@ -13,6 +22,7 @@ set(RAY_SRCS
   io.cc
   status.cc
   worker.cc
+  gcs/client.cc
 )
 
 install(FILES
@@ -32,6 +42,6 @@ install(
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 
 ADD_RAY_LIB(ray
-    SOURCES ${RAY_SRCS}
+    SOURCES ${RAY_SRCS} ${HIREDIS_SRCS}
     SHARED_LINK_LIBS ${PROTOBUF_STATIC_LIBRARIES} proto
     STATIC_LINK_LIBS ${PROTOBUF_STATIC_LIBRARIES} proto)

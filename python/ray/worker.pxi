@@ -17,12 +17,6 @@
 
 import sys
 
-cdef object_id_list(const vector[CObjectID]& object_ids):
-    result = []
-    for i in range(object_ids.size()):
-        result.append(ObjectID(object_ids[i].binary()))
-    return result
-
 cdef class Worker:
 
     def __cinit__(self):

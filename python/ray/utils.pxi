@@ -15,19 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from ray.includes.common cimport *
-from ray.includes.libray cimport *
-
-cdef int check_status(const CStatus& status) nogil except -1
-
-cdef class Worker:
-    cdef:
-        shared_ptr[CWorker] worker
-
-cdef class Client:
-    cdef:
-        shared_ptr[CClient] client
-
-cdef class GCSClient:
-    cdef:
-        shared_ptr[CGCSClient] client
+cdef object_id_list(const vector[CObjectID]& object_ids):
+    result = []
+    for i in range(object_ids.size()):
+        result.append(ObjectID(object_ids[i].binary()))
+    return result

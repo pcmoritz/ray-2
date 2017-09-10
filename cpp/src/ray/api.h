@@ -24,6 +24,7 @@
 #include "ray/id.h"
 #include "ray/status.h"
 #include "ray/worker.h"
+#include "ray/gcs/client.h"
 
 /// \brief Top-level namespace for Ray C++ API
 namespace ray {}

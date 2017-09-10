@@ -38,9 +38,10 @@ cdef extern from "ray/api.h" namespace "ray" nogil:
 
         c_string binary() const
 
+    ctypedef CUniqueID CTaskID" ray::TaskID"
+    ctypedef CUniqueID CJobID" ray::JobID"
     ctypedef CUniqueID CObjectID" ray::ObjectID"
     ctypedef CUniqueID CFunctionID" ray::FunctionID"
-    ctypedef CUniqueID CTaskID" ray::TaskID"
 
     cdef cppclass CWorker" ray::Worker":
 
@@ -53,3 +54,11 @@ cdef extern from "ray/api.h" namespace "ray" nogil:
         CStatus Connect(const c_string& address)
 
         CStatus Submit(const CFunctionID& function_id, const vector[CObjectID]& args, CTaskID* task_id, vector[CObjectID]* return_ids)
+
+    cdef cppclass CGCSClient" ray::gcs::Client":
+
+        CStatus Connect(const c_string& address, int port);
+
+        CStatus RegisterFunction(const CJobID& job_id, const CFunctionID& function_id, const c_string& name, const c_string& data)
+
+        CStatus RetrieveFunction(const CJobID& job_id, const CFunctionID& function_id, c_string* name, c_string* data);

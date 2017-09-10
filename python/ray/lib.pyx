@@ -19,11 +19,20 @@
 # distutils: language = c++
 # cython: embedsignature = True
 
+# Utilities
+include "utils.pxi"
+
+# The Ray Python API
+include "api.pxi"
+
 # Clients
 include "client.pxi"
 
 # Errors
 include "error.pxi"
+
+# Global Constrol State
+include "gcs.pxi"
 
 # Object, Function and Task IDs
 include "id.pxi"

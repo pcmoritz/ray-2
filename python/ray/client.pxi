@@ -33,6 +33,7 @@ cdef class Client:
         cdef vector[CObjectID] return_ids
         with nogil:
             check_status(self.client.get().Submit(function_id.data, object_ids, address(task_id), address(return_ids)))
+        return object_id_list(return_ids)
 
 def connect(c_string socket_name):
     cdef Client result = Client()

@@ -62,10 +62,29 @@ cdef class UniqueID:
         return UniqueID(data.binary())
 
 cdef class ObjectID(UniqueID):
-    pass
+
+    @staticmethod
+    def from_random():
+        cdef CUniqueID data = CUniqueID.from_random()
+        return ObjectID(data.binary())
 
 cdef class FunctionID(UniqueID):
-    pass
+
+    @staticmethod
+    def from_random():
+        cdef CUniqueID data = CUniqueID.from_random()
+        return FunctionID(data.binary())
 
 cdef class TaskID(UniqueID):
-    pass
+
+    @staticmethod
+    def from_random():
+        cdef CUniqueID data = CUniqueID.from_random()
+        return TaskID(data.binary())
+
+cdef class JobID(UniqueID):
+
+    @staticmethod
+    def from_random():
+        cdef CUniqueID data = CUniqueID.from_random()
+        return JobID(data.binary())

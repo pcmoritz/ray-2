@@ -65,6 +65,9 @@ std::string Status::CodeAsString() const {
     case StatusCode::NotImplemented:
       type = "NotImplemented";
       break;
+    case StatusCode::RedisError:
+      type = "RedisError";
+      break;
     default:
       type = "Unknown";
       break;

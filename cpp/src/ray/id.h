@@ -56,6 +56,7 @@ struct UniqueIDHasher {
 };
 
 typedef UniqueID TaskID;
+typedef UniqueID JobID;
 typedef UniqueID ObjectID;
 typedef UniqueID FunctionID;
 
