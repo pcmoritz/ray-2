@@ -35,6 +35,16 @@ cdef class Client:
             check_status(self.client.get().Submit(function_id.data, object_ids, address(task_id), address(return_ids)))
         return object_id_list(return_ids)
 
+    def get_next_task(self):
+        cdef FunctionID function_id = FunctionID()
+        cdef TaskID task_id = TaskID()
+        cdef vector[CObjectID] object_ids
+        cdef vector[CObjectID] return_ids
+        with nogil:
+            check_status(self.client.get().GetNextTask(address(function_id.data), address(task_id.data), address(object_ids), address(return_ids)))
+        return function_id, task_id, object_id_list(object_ids), object_id_list(return_ids)
+
+
 def connect(c_string socket_name):
     cdef Client result = Client()
     with nogil:

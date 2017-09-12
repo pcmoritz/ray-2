@@ -15,19 +15,31 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#include <vector>
+#include <string>
+#include <map>
 
-#include "ray/status.h"
 #include "ray/id.h"
+#include "ray/status.h"
+#include "ray/util/logging.h"
 
 namespace ray {
 
-class Worker {
+namespace gcs {
+
+class DBConn;
+
+class Client {
  public:
-  Status Connect(const std::string& address);
-  Status GetNextTask(FunctionID* function_id, TaskID* task_id, std::vector<ObjectID>* args, std::vector<ObjectID>* return_ids);
+  Client();
+  ~Client();
+  Status Connect(const std::string& address, int port);
+  Status RegisterFunction(const JobID& job_id, const FunctionID& function_id, const std::string& name, const std::string& data);
+  Status RetrieveFunction(const JobID& job_id, const FunctionID& function_id, std::string* name, std::string* data);
+  Status NotifyError(const JobID& job_id, const std::map<std::string, std::string>& error_info);
  private:
-  int conn_;
+  std::unique_ptr<DBConn> conn_;
 };
+
+}  // namespace gcs
 
 }  // namespace ray

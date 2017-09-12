@@ -20,10 +20,6 @@ from ray.includes.libray cimport *
 
 cdef int check_status(const CStatus& status) nogil except -1
 
-cdef class Worker:
-    cdef:
-        shared_ptr[CWorker] worker
-
 cdef class Client:
     cdef:
         shared_ptr[CClient] client
@@ -31,3 +27,8 @@ cdef class Client:
 cdef class GCSClient:
     cdef:
         shared_ptr[CGCSClient] client
+
+cdef class Service:
+    cdef:
+        Client client
+        GCSClient gcs_client

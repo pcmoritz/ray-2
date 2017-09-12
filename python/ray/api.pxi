@@ -15,4 +15,10 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from ray.lib import JobID, FunctionID, ObjectID, Service, Client, connect, connect_gcs, start_driver, start_service, init, global_service
+import ray
+
+global_service = None
+
+def init(socket, address="127.0.0.1", port=6379):
+    global global_service
+    global_service = start_driver(socket, address, port)

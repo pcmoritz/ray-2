@@ -16,7 +16,7 @@
 # under the License.
 
 from ray.includes.common cimport c_string, CStatus
-
+from pyarrow.compat import frombytes
 
 class RayException(Exception):
     pass
@@ -27,4 +27,5 @@ cdef int check_status(const CStatus& status) nogil except -1:
         return 0
 
     with gil:
-        raise RayException()
+        message = frombytes(status.message())
+        raise RayException(message)

@@ -26,6 +26,7 @@ class Client {
  public:
   Status Connect(const std::string& address);
   Status Submit(const FunctionID& function_id, const std::vector<ObjectID>& args, TaskID* task_id, std::vector<ObjectID>* return_ids);
+  Status GetNextTask(FunctionID* function_id, TaskID* task_id, std::vector<ObjectID>* args, std::vector<ObjectID>* return_ids);
  private:
   int conn_;
 };

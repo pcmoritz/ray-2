@@ -43,17 +43,13 @@ cdef extern from "ray/api.h" namespace "ray" nogil:
     ctypedef CUniqueID CObjectID" ray::ObjectID"
     ctypedef CUniqueID CFunctionID" ray::FunctionID"
 
-    cdef cppclass CWorker" ray::Worker":
-
-        CStatus Connect(const c_string& address)
-
-        CStatus GetNextTask(CFunctionID* function_id, CTaskID* task_id, vector[CObjectID]* args, vector[CObjectID]* return_ids)
-
     cdef cppclass CClient" ray::Client":
 
         CStatus Connect(const c_string& address)
 
         CStatus Submit(const CFunctionID& function_id, const vector[CObjectID]& args, CTaskID* task_id, vector[CObjectID]* return_ids)
+
+        CStatus GetNextTask(CFunctionID* function_id, CTaskID* task_id, vector[CObjectID]* args, vector[CObjectID]* return_ids)
 
     cdef cppclass CGCSClient" ray::gcs::Client":
 

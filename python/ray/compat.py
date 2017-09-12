@@ -15,4 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from ray.lib import JobID, FunctionID, ObjectID, Service, Client, connect, connect_gcs, start_driver, start_service, init, global_service
+import sys
+
+PY2 = sys.version_info[0] == 2
+
+if PY2:
+    def frombytes(o):
+        return o
+else:
+    def frombytes(o):
+        return o.decode('utf8')

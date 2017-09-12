@@ -22,7 +22,6 @@ set(RAY_SRCS
   id.cc
   io.cc
   status.cc
-  worker.cc
   gcs/client.cc
 )
 
@@ -31,7 +30,6 @@ install(FILES
   client.h
   id.h
   status.h
-  worker.h
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ray")
 
 # pkg-config support

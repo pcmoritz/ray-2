@@ -31,11 +31,11 @@ include "client.pxi"
 # Errors
 include "error.pxi"
 
-# Global Constrol State
+# Global Control State
 include "gcs.pxi"
 
 # Object, Function and Task IDs
 include "id.pxi"
 
-# Workers and drivers
-include "worker.pxi"
+# Drivers and Workers
+include "service.pxi"

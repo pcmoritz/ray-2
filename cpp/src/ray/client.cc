@@ -20,7 +20,7 @@
 #include "ray/id.h"
 #include "ray/io.h"
 #include "ray/status.h"
-#include "ray/worker.h"
+#include "ray/util/logging.h"
 #include "ray/proto/ray.pb.h"
 
 namespace ray {
@@ -37,6 +37,24 @@ Status Client::Submit(const FunctionID& function_id, const std::vector<ObjectID>
   std::string data;
   task.SerializeToString(&data);
   return WriteMessage(conn_, MessageType::SubmitTask, data.size(), reinterpret_cast<uint8_t*>(&data[0]));
+}
+
+Status Client::GetNextTask(FunctionID* function_id, TaskID* task_id, std::vector<ObjectID>* args, std::vector<ObjectID>* return_ids) {
+  int64_t type;
+  std::string buffer;
+  RETURN_NOT_OK(ReadMessage(conn_, &type, &buffer));
+  RAY_CHECK(type == MessageType::GetTask);
+  Task task;
+  task.ParseFromString(buffer);
+  *function_id = FunctionID::from_binary(task.function_id());
+  *task_id = FunctionID::from_binary(task.task_id());
+  for (auto arg_id : task.arg_ids()) {
+    args->push_back(ObjectID::from_binary(arg_id));
+  }
+  for (auto return_id : task.return_ids()) {
+    return_ids->push_back(ObjectID::from_binary(return_id));
+  }
+  return Status::OK();
 }
 
 }  // namespace ray

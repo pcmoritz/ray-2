@@ -15,4 +15,24 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from ray.lib import JobID, FunctionID, ObjectID, Service, Client, connect, connect_gcs, start_driver, start_service, init, global_service
+import sys
+
+cdef class Service:
+    def main_loop(self):
+        while True:
+            function_id, task_id, arg_ids, return_ids = self.client.get_next_task()
+            print("executing task ", task_id)
+
+    def get_gcs_client(self):
+        return self.gcs_client
+
+def start_service(socket):
+    cdef Service service = Service()
+    service.client = ray.connect(socket.encode("ascii"))
+    return service
+
+def start_driver(socket, addr, port):
+    cdef Service service = Service()
+    service.client = ray.connect(socket.encode("ascii"))
+    service.gcs_client = connect_gcs(addr, port)
+    return service
