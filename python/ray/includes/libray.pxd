@@ -47,6 +47,8 @@ cdef extern from "ray/api.h" namespace "ray" nogil:
 
         CStatus Connect(const c_string& address)
 
+        CStatus Connect(int fd)
+
         CStatus Submit(const CFunctionID& function_id, const vector[CObjectID]& args, CTaskID* task_id, vector[CObjectID]* return_ids)
 
         CStatus GetNextTask(CFunctionID* function_id, CTaskID* task_id, vector[CObjectID]* args, vector[CObjectID]* return_ids)

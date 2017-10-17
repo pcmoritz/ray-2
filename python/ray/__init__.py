@@ -15,4 +15,6 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from ray.lib import JobID, FunctionID, ObjectID, Service, Client, connect, connect_gcs, start_driver, start_service, init, global_service
+from ray.lib import JobID, FunctionID, ObjectID, Service, Client, connect_gcs, start_driver
+
+from ray.api import init, global_service, remote

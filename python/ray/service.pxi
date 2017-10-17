@@ -15,6 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import os
 import sys
 
 cdef class Service:
@@ -23,16 +24,32 @@ cdef class Service:
             function_id, task_id, arg_ids, return_ids = self.client.get_next_task()
             print("executing task ", task_id)
 
-    def get_gcs_client(self):
+    @property
+    def job_id(self):
+        return self.job_id
+
+    @property
+    def client(self):
+        return self.client
+
+cdef class Driver(Service):
+
+    @property
+    def gcs_client(self):
         return self.gcs_client
 
-def start_service(socket):
+cdef class Worker(Service):
+    pass
+
+def start_worker(socket):
     cdef Service service = Service()
-    service.client = ray.connect(socket.encode("ascii"))
+    service.client = Service.connect_to_fd(3)
     return service
 
 def start_driver(socket, addr, port):
-    cdef Service service = Service()
-    service.client = ray.connect(socket.encode("ascii"))
-    service.gcs_client = connect_gcs(addr, port)
-    return service
+    cdef Driver driver = Driver()
+    driver.client = Client.connect_to_socket(socket.encode("ascii"))
+    print("connecting with addr {} and port {}".format(addr, port))
+    driver.gcs_client = connect_gcs(addr, port)
+    driver.job_id = JobID.from_random()
+    return driver

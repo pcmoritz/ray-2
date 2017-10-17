@@ -1,12 +1,11 @@
 package scheduler
 
 import (
+  //"crypto/sha1"
   "encoding/binary"
-  "bufio"
   "io"
   "log"
   "net"
-
   "github.com/golang/protobuf/proto"
   "github.com/pcmoritz/ray-2/go/pkg/ray"
 )
@@ -57,12 +56,30 @@ func writeMessage(conn net.Conn, messageType int64, message []byte) {
   }
 }
 
+const IDSize = 20
+
+type ObjectTableEntry struct {
+
+}
+
+// type ObjectTable struct {
+//   map[byte[IDSize]][ObjectTableEntry] entries
+// }
+
+type QueueEntry struct {
+  task *ray.Task
+}
+
+var activeQueue []QueueEntry
+
 func SchedulerServer(conn net.Conn) {
   log.Print("New client joined")
-  reader := bufio.NewReader(conn)
+  // TODO(pcm): Change that
   for {
-    message := &ray.Task{}
-    _, buf := readMessage(reader)
-    proto.Unmarshal(buf, message)
+    task := &ray.Task{}
+    _, buf := readMessage(conn)
+    proto.Unmarshal(buf, task)
+    activeQueue = append(activeQueue, QueueEntry{task})
+    // log.Print("Got task ", message)
   }
 }

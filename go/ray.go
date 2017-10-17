@@ -5,6 +5,7 @@ import (
   "fmt"
   "log"
   "net"
+  "os"
   "os/exec"
   "sync"
   "syscall"
@@ -16,10 +17,65 @@ import (
   "github.com/pcmoritz/ray-2/go/pkg/scheduler"
 )
 
-func startWorkers(socket string) {
-  log.Print("Starting worker pool...")
-  // worker := exec.Command("ray", "worker", "--socket", socket)
-  exec.Command("ray", "worker", "--socket", socket)
+// #cgo LDFLAGS: -lplasma
+// #cgo CXXFLAGS: --std=c++11
+// #include "plasma.h"
+import "C"
+
+type Worker struct {
+
+}
+
+// A worker that is connected to this local Ray instance
+// type Worker struct {
+// 	X int
+// 	Y int
+// }
+
+// var workers []Worker
+
+func startObjectStore() {
+  log.Print("Starting object store...")
+  cmd := exec.Command("plasma_store", "-s", "/tmp/plasma", "-m", "1000000000")
+  if err := cmd.Start(); err != nil {
+    panic(err)
+  }
+  objectStoreClient := C.PlasmaClientConnect(C.CString("/tmp/plasma"))
+  defer C.DestroyPlasmaClient(objectStoreClient)
+
+  var fd C.int
+  var object_id C.ObjectID
+  var data_size C.int64_t
+  var metadata_size C.int64_t
+
+  C.PlasmaClientSubscribe(objectStoreClient, &fd)
+
+  for {
+    C.PlasmaClientGetNotification(objectStoreClient, fd, &object_id, &data_size, &metadata_size)
+    fmt.Printf("data size ", data_size)
+  }
+}
+
+func startWorker() {
+  log.Print("Starting worker...")
+  r, w, err := os.Pipe()
+  if err != nil {
+      panic(err)
+  }
+  cmd := exec.Command("ray", "worker")
+  cmd.ExtraFiles = []*os.File{w}
+  if err := cmd.Start(); err != nil {
+    panic(err)
+  }
+
+  buf := proto.NewBuffer(nil)
+  go func() {
+    buf.Reset()
+    task := new(ray.Task)
+    r.Read(buf.Bytes())
+    buf.Unmarshal(task)
+    fmt.Printf("Got task", task)
+  }()
 }
 
 func establishPubSub(connPool *redis.Pool, functionTable gcs.FunctionTable) {
@@ -113,7 +169,8 @@ func main() {
 
   go establishPubSub(connPool, functionTable)
 
-  startWorkers(socket)
+  startWorker()
+  startObjectStore()
 
   for {
       fd, err := l.Accept()

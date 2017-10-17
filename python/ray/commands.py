@@ -28,7 +28,7 @@ def cli():
     pass
 
 @click.command()
-@click.option("--socket", required=True, type=str,
+@click.option("--socket", required=False, type=str,
               help="The UNIX socket of the local scheduler to connect to")
 def worker(socket):
     ray.start_service(socket)

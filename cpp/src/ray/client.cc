@@ -29,6 +29,11 @@ Status Client::Connect(const std::string& address) {
   return ConnectUnixSocketRetry(address, -1, -1, &conn_);
 }
 
+Status Client::Connect(int fd) {
+  conn_ = fd;
+  return Status::OK();
+}
+
 Status Client::Submit(const FunctionID& function_id, const std::vector<ObjectID>& args, TaskID* task_id, std::vector<ObjectID>* return_ids) {
   Task task;
   task.set_task_id(TaskID::from_random().binary());

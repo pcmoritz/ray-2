@@ -32,3 +32,4 @@ cdef class Service:
     cdef:
         Client client
         GCSClient gcs_client
+        object job_id

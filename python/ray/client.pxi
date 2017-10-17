@@ -22,7 +22,21 @@ cdef class Client:
     def __cinit__(self):
         self.client.reset(new CClient())
 
-    def submit(self, FunctionID function_id, list args):
+    @staticmethod
+    def connect_to_socket(c_string socket_name):
+        cdef Client result = Client()
+        with nogil:
+            check_status(result.client.get().Connect(socket_name))
+        return result
+
+    @staticmethod
+    def connect_to_fd(int fd):
+        cdef Client result = Client()
+        with nogil:
+            check_status(result.client.get().Connect(fd))
+        return result
+
+    def submit(self, FunctionID function_id, tuple args):
         cdef vector[CObjectID] object_ids
         cdef ObjectID object_id
         for arg in args:
@@ -43,10 +57,3 @@ cdef class Client:
         with nogil:
             check_status(self.client.get().GetNextTask(address(function_id.data), address(task_id.data), address(object_ids), address(return_ids)))
         return function_id, task_id, object_id_list(object_ids), object_id_list(return_ids)
-
-
-def connect(c_string socket_name):
-    cdef Client result = Client()
-    with nogil:
-        check_status(result.client.get().Connect(socket_name))
-    return result
