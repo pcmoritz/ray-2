@@ -23,6 +23,7 @@ set(RAY_SRCS
   io.cc
   status.cc
   gcs/client.cc
+  gcs/asio.cc
 )
 
 install(FILES
