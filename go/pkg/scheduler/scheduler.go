@@ -70,7 +70,15 @@ type QueueEntry struct {
   task *ray.Task
 }
 
+var waitingQueue []QueueEntry
 var activeQueue []QueueEntry
+
+func SchedulerLoop() {
+  for {
+    // TODO get object id from channel
+    // iterate through waitingQueue and shift stuff to activeQueue
+  }
+}
 
 func SchedulerServer(conn net.Conn) {
   log.Print("New client joined")
@@ -79,7 +87,7 @@ func SchedulerServer(conn net.Conn) {
     task := &ray.Task{}
     _, buf := readMessage(conn)
     proto.Unmarshal(buf, task)
-    activeQueue = append(activeQueue, QueueEntry{task})
+    waitingQueue = append(waitingQueue, QueueEntry{task})
     // log.Print("Got task ", message)
   }
 }

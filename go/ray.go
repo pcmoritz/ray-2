@@ -34,7 +34,7 @@ type Worker struct {
 
 // var workers []Worker
 
-func startObjectStore() {
+func startObjectStore(objectTable) {
   log.Print("Starting object store...")
   cmd := exec.Command("plasma_store", "-s", "/tmp/plasma", "-m", "1000000000")
   if err := cmd.Start(); err != nil {
@@ -52,7 +52,8 @@ func startObjectStore() {
 
   for {
     C.PlasmaClientGetNotification(objectStoreClient, fd, &object_id, &data_size, &metadata_size)
-    fmt.Printf("data size ", data_size)
+    // fmt.Printf("data size ", data_size)
+    AddObject(objectTable, object_id)
   }
 }
 
@@ -156,6 +157,7 @@ func main() {
   }
 
   functionTable := gcs.FunctionTable{}
+  objectTable := gcs.ObjectTable{}
 
   err := syscall.Unlink(socket)
   if err != nil {
@@ -170,7 +172,7 @@ func main() {
   go establishPubSub(connPool, functionTable)
 
   startWorker()
-  startObjectStore()
+  startObjectStore(objectTable)
 
   for {
       fd, err := l.Accept()

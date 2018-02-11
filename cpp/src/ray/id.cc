@@ -66,4 +66,4 @@ bool UniqueID::operator==(const UniqueID& rhs) const {
   return std::memcmp(data(), rhs.data(), kUniqueIDSize) == 0;
 }
 
-}
+}  // namespace ray
