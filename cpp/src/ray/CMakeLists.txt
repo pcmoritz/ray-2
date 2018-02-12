@@ -2,14 +2,17 @@
 cmake_minimum_required(VERSION 3.2)
 set(CMAKE_CXX_FLAGS "-g -Wall -Werror -std=c++11")
 
+include_directories(${PROTOBUF_INCLUDE_DIRS})
+include_directories(../../thirdparty/)
+
+add_definitions(-DASIO_STANDALONE)
+
 add_subdirectory(proto)
 add_subdirectory(util)
 add_subdirectory(gcs)
 
-include_directories(${PROTOBUF_INCLUDE_DIRS})
-include_directories(../../thirdparty/)
-
 set(HIREDIS_SRCS
+  ../../thirdparty/hiredis/async.c
   ../../thirdparty/hiredis/dict.c
   ../../thirdparty/hiredis/hiredis.c
   ../../thirdparty/hiredis/net.c

@@ -18,20 +18,26 @@
 cmake_minimum_required(VERSION 3.2)
 project(ray)
 
+# This ensures that things like gnu++11 get passed correctly
+set(CMAKE_CXX_STANDARD 11)
+
+# We require a C++11 compliant compiler
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
+option(RAY_BUILD_TESTS
+  "Build the Ray googletest unit tests"
+  ON)
 
 add_custom_target(ray_dependencies)
 
 include(ExternalProject)
 include(GNUInstallDirs)
 include(BuildUtils)
+enable_testing()
+
 include(ThirdpartyToolchain)
-
-# This ensures that things like gnu++11 get passed correctly
-set(CMAKE_CXX_STANDARD 11)
-
-# We require a C++11 compliant compiler
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(RAY_BUILD_SHARED on)
 set(RAY_BUILD_STATIC on)
