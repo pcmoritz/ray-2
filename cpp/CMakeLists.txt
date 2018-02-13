@@ -21,6 +21,9 @@ project(ray)
 # This ensures that things like gnu++11 get passed correctly
 set(CMAKE_CXX_STANDARD 11)
 
+# Enable position independent code
+set(CMAKE_POSITION_INDEPENDENT_CODE on)
+
 # We require a C++11 compliant compiler
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

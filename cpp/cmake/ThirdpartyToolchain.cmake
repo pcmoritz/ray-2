@@ -62,7 +62,9 @@ ExternalProject_Add(boost_ep
     INSTALL_COMMAND ""
     ${EP_LOG_OPTIONS})
 set(Boost_INCLUDE_DIR "${BOOST_PREFIX}")
-set(Boost_INCLUDE_DIRS "${BOOST_INCLUDE_DIR}")
+set(Boost_INCLUDE_DIRS "${Boost_INCLUDE_DIR}")
+include_directories(${Boost_INCLUDE_DIR})
+message(XXX ${Boost_INCLUDE_DIR})
 add_dependencies(ray_dependencies boost_ep)
 
 # Google Test
