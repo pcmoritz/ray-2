@@ -17,6 +17,7 @@
 
 set(GFLAGS_VERSION "2.2.0")
 set(GTEST_VERSION "1.8.0")
+set(GBENCHMARK_VERSION "1.1.0")
 
 # Boost
 
@@ -145,4 +146,43 @@ if(RAY_BUILD_TESTS OR RAY_BUILD_BENCHMARKS)
     STATIC_LIB ${GFLAGS_STATIC_LIB})
 
   add_dependencies(gflags gflags_ep)
+endif()
+
+# Google Benchmark
+
+if(RAY_BUILD_BENCHMARKS)
+  add_custom_target(runbenchmark ctest -L benchmark)
+
+  if(APPLE)
+    set(GBENCHMARK_CMAKE_CXX_FLAGS "-fPIC -std=c++11 -stdlib=libc++")
+  elseif(NOT MSVC)
+    set(GBENCHMARK_CMAKE_CXX_FLAGS "-fPIC --std=c++11")
+  endif()
+
+  set(GBENCHMARK_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/gbenchmark_ep/src/gbenchmark_ep-install")
+  set(GBENCHMARK_INCLUDE_DIR "${GBENCHMARK_PREFIX}/include")
+  set(GBENCHMARK_STATIC_LIB "${GBENCHMARK_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  set(GBENCHMARK_VENDORED 1)
+  set(GBENCHMARK_CMAKE_ARGS
+      "-DCMAKE_BUILD_TYPE=Release"
+      "-DCMAKE_INSTALL_PREFIX:PATH=${GBENCHMARK_PREFIX}"
+      "-DBENCHMARK_ENABLE_TESTING=OFF"
+      "-DCMAKE_CXX_FLAGS=${GBENCHMARK_CMAKE_CXX_FLAGS}")
+  if (APPLE)
+    set(GBENCHMARK_CMAKE_ARGS ${GBENCHMARK_CMAKE_ARGS} "-DBENCHMARK_USE_LIBCXX=ON")
+  endif()
+
+  ExternalProject_Add(gbenchmark_ep
+    URL "https://github.com/google/benchmark/archive/v${GBENCHMARK_VERSION}.tar.gz"
+    BUILD_BYPRODUCTS "${GBENCHMARK_STATIC_LIB}"
+    CMAKE_ARGS ${GBENCHMARK_CMAKE_ARGS}
+    ${EP_LOG_OPTIONS})
+
+  message(STATUS "GBenchmark include dir: ${GBENCHMARK_INCLUDE_DIR}")
+  message(STATUS "GBenchmark static library: ${GBENCHMARK_STATIC_LIB}")
+  include_directories(SYSTEM ${GBENCHMARK_INCLUDE_DIR})
+  ADD_THIRDPARTY_LIB(benchmark
+    STATIC_LIB ${GBENCHMARK_STATIC_LIB})
+
+  add_dependencies(benchmark gbenchmark_ep)
 endif()

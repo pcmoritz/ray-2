@@ -185,6 +185,70 @@ function(ADD_RAY_LIB LIB_NAME)
 endfunction()
 
 ############################################################
+# Benchmarking
+############################################################
+# Add a new micro benchmark, with or without an executable that should be built.
+# If benchmarks are enabled then they will be run along side unit tests with ctest.
+# 'make runbenchmark' and 'make unittest' to build/run only benchmark or unittests,
+# respectively.
+#
+# REL_BENCHMARK_NAME is the name of the benchmark app. It may be a single component
+# (e.g. monotime-benchmark) or contain additional components (e.g.
+# net/net_util-benchmark). Either way, the last component must be a globally
+# unique name.
+
+# The benchmark will registered as unit test with ctest with a label
+# of 'benchmark'.
+#
+# Arguments after the test name will be passed to set_tests_properties().
+function(ADD_RAY_BENCHMARK REL_BENCHMARK_NAME)
+  if(NO_BENCHMARKS)
+    return()
+  endif()
+  get_filename_component(BENCHMARK_NAME ${REL_BENCHMARK_NAME} NAME_WE)
+
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${REL_BENCHMARK_NAME}.cc)
+    # This benchmark has a corresponding .cc file, set it up as an executable.
+    set(BENCHMARK_PATH "${EXECUTABLE_OUTPUT_PATH}/${BENCHMARK_NAME}")
+    add_executable(${BENCHMARK_NAME} "${REL_BENCHMARK_NAME}.cc")
+    target_link_libraries(${BENCHMARK_NAME} ${RAY_BENCHMARK_LINK_LIBS})
+    add_dependencies(runbenchmark ${BENCHMARK_NAME})
+    set(NO_COLOR "--color_print=false")
+  else()
+    # No executable, just invoke the benchmark (probably a script) directly.
+    set(BENCHMARK_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${REL_BENCHMARK_NAME})
+    set(NO_COLOR "")
+  endif()
+
+  add_test(${BENCHMARK_NAME}
+    ${BUILD_SUPPORT_DIR}/run-test.sh ${CMAKE_BINARY_DIR} benchmark ${BENCHMARK_PATH} ${NO_COLOR})
+  set_tests_properties(${BENCHMARK_NAME} PROPERTIES LABELS "benchmark")
+  if(ARGN)
+    set_tests_properties(${BENCHMARK_NAME} PROPERTIES ${ARGN})
+  endif()
+endfunction()
+
+# A wrapper for add_dependencies() that is compatible with NO_BENCHMARKS.
+function(ADD_RAY_BENCHMARK_DEPENDENCIES REL_BENCHMARK_NAME)
+  if(NO_BENCHMARKS)
+    return()
+  endif()
+  get_filename_component(BENCHMARK_NAME ${REL_BENCHMARK_NAME} NAME_WE)
+
+  add_dependencies(${BENCHMARK_NAME} ${ARGN})
+endfunction()
+
+# A wrapper for target_link_libraries() that is compatible with NO_BENCHMARKS.
+function(RAY_BENCHMARK_LINK_LIBRARIES REL_BENCHMARK_NAME)
+    if(NO_BENCHMARKS)
+    return()
+  endif()
+  get_filename_component(BENCHMARK_NAME ${REL_BENCHMARK_NAME} NAME_WE)
+
+  target_link_libraries(${BENCHMARK_NAME} ${ARGN})
+endfunction()
+
+############################################################
 # Testing
 ############################################################
 # Add a new test case, with or without an executable that should be built.

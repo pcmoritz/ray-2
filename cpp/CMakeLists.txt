@@ -30,6 +30,10 @@ option(RAY_BUILD_TESTS
   "Build the Ray googletest unit tests"
   ON)
 
+option(RAY_BUILD_BENCHMARKS
+  "Build the Ray benchmarks"
+  ON)
+
 add_custom_target(ray_dependencies)
 
 include(ExternalProject)

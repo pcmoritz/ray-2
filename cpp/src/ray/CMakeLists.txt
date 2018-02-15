@@ -18,6 +18,7 @@ set(HIREDIS_SRCS
   ../../thirdparty/hiredis/net.c
   ../../thirdparty/hiredis/read.c
   ../../thirdparty/hiredis/sds.c
+  ../../thirdparty/ae/ae.c
 )
 
 set(RAY_SRCS
