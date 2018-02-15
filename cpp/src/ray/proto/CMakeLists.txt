@@ -21,7 +21,7 @@ ExternalProject_Add(protobuf
         -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
         -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON)
 
-include_directories(${PROTOBUF_INCLUDE_DIRS})
+include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIRS})
 
 set(PROTO_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/ray.pb.cc")
 set(PROTO_SRC "${CMAKE_CURRENT_SOURCE_DIR}/ray.pb.h")

@@ -17,6 +17,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 #include "ray/id.h"
 #include "ray/status.h"
