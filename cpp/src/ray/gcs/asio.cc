@@ -8,22 +8,21 @@ RedisAsioClient::RedisAsioClient(boost::asio::io_service& io_service,redisAsyncC
 	read_in_progress_(false),
 	write_in_progress_(false)
 {
-	/*this gives us access to c->fd*/
+	// gives access to c->fd
 	redisContext *c = &(ac->c);
 
-	/*hiredis already connected
-	 *use the existing native socket
-	 */
+	// hiredis is already connected
+	// use the existing native socket
 	socket_.assign(boost::asio::ip::tcp::v4(),c->fd);
 
-	/*register hooks with the hiredis async context*/
+	// register hooks with the hiredis async context
 	ac->ev.addRead = call_C_addRead;
 	ac->ev.delRead = call_C_delRead;
 	ac->ev.addWrite = call_C_addWrite;
 	ac->ev.delWrite = call_C_delWrite;
 	ac->ev.cleanup = call_C_cleanup;
 
-	/*C wrapper functions will use this pointer to call class members.*/
+	// C wrapper functions will use this pointer to call class members.
 	ac->ev.data = this;
 }
 
